@@ -477,6 +477,7 @@ _func_enter_;
 		{
 			pendp_desc = &phost_endp->desc;
 
+#if 0
 			DBG_871X("\nusb_endpoint_descriptor(%d):\n", i);
 			DBG_871X("bLength=%x\n",pendp_desc->bLength);
 			DBG_871X("bDescriptorType=%x\n",pendp_desc->bDescriptorType);
@@ -487,27 +488,28 @@ _func_enter_;
 			DBG_871X("bInterval=%x\n",pendp_desc->bInterval);
 			//DBG_871X("bRefresh=%x\n",pendp_desc->bRefresh);
 			//DBG_871X("bSynchAddress=%x\n",pendp_desc->bSynchAddress);
+#endif
 
 			if (RT_usb_endpoint_is_bulk_in(pendp_desc))
 			{
-				DBG_871X("RT_usb_endpoint_is_bulk_in = %x\n", RT_usb_endpoint_num(pendp_desc));
+				//DBG_871X("RT_usb_endpoint_is_bulk_in = %x\n", RT_usb_endpoint_num(pendp_desc));
 				pdvobjpriv->RtNumInPipes++;
 			}
 			else if (RT_usb_endpoint_is_int_in(pendp_desc))
 			{
-				DBG_871X("RT_usb_endpoint_is_int_in = %x, Interval = %x\n", RT_usb_endpoint_num(pendp_desc),pendp_desc->bInterval);
+				//DBG_871X("RT_usb_endpoint_is_int_in = %x, Interval = %x\n", RT_usb_endpoint_num(pendp_desc),pendp_desc->bInterval);
 				pdvobjpriv->RtNumInPipes++;
 			}
 			else if (RT_usb_endpoint_is_bulk_out(pendp_desc))
 			{
-				DBG_871X("RT_usb_endpoint_is_bulk_out = %x\n", RT_usb_endpoint_num(pendp_desc));
+				//DBG_871X("RT_usb_endpoint_is_bulk_out = %x\n", RT_usb_endpoint_num(pendp_desc));
 				pdvobjpriv->RtNumOutPipes++;
 			}
 			pdvobjpriv->ep_num[i] = RT_usb_endpoint_num(pendp_desc);
 		}
 	}
 
-	DBG_871X("nr_endpoint=%d, in_num=%d, out_num=%d\n\n", pdvobjpriv->nr_endpoint, pdvobjpriv->RtNumInPipes, pdvobjpriv->RtNumOutPipes);
+	//DBG_871X("nr_endpoint=%d, in_num=%d, out_num=%d\n\n", pdvobjpriv->nr_endpoint, pdvobjpriv->RtNumInPipes, pdvobjpriv->RtNumOutPipes);
 
 	if (pusbd->speed == USB_SPEED_HIGH) {
 		pdvobjpriv->ishighspeed = _TRUE;

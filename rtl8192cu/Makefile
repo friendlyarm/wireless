@@ -38,7 +38,7 @@ CONFIG_RTL8192CU_REDEFINE_1X1 = n
 CONFIG_INTEL_WIDI = n
 CONFIG_WAKE_ON_WLAN = n
 
-CONFIG_PLATFORM_I386_PC = y
+CONFIG_PLATFORM_I386_PC = n
 CONFIG_PLATFORM_TI_AM3517 = n
 CONFIG_PLATFORM_ANDROID_X86 = n
 CONFIG_PLATFORM_JB_X86 = n
@@ -316,6 +316,40 @@ KVER  := 2.6.34.1
 KSRC ?= /usr/src/linux-2.6.34.1
 endif
 
+# { FriendlyARM boards support
+ifeq ($(CONFIG_VENDOR_FRIENDLYARM), y)
+MODULE_NAME = rtl8192cu
+ifeq ($(KERNELRELEASE),)
+$(info ********************************************************************************)
+$(info *  Building module - $(MODULE_NAME).ko for FriendlyARM boards)
+endif
+EXTRA_CFLAGS += -DCONFIG_LITTLE_ENDIAN
+ARCH := arm
+CROSS_COMPILE := arm-linux-
+KVER := 3.4.39-FriendlyARM
+KSRC ?= /opt/FriendlyARM/nanopi3/linux-3.4.y
+KLIB ?= /tmp/wireless-modules
+
+ifeq ($(CONFIG_PLATFORM_ANDROID), y)
+ifeq ($(KERNELRELEASE),)
+$(info *  Building driver with Android support)
+endif
+EXTRA_CFLAGS += -DCONFIG_PLATFORM_ANDROID
+endif
+ifeq ($(CONFIG_IOCTL_CFG80211), y)
+EXTRA_CFLAGS += -DCONFIG_IOCTL_CFG80211=1
+endif
+
+ifeq ($(KERNELRELEASE),)
+$(info *)
+$(info *    Kernel Version: $(KVER) )
+$(info *    Kernel TOP-Dir: $(KSRC) )
+$(info *)
+$(info *  Copyright 2016 FriendlyARM (http://www.friendlyarm.com/))
+$(info ********************************************************************************)
+endif
+endif # END of VENDOR_FRIENDLYARM }
+
 ifeq ($(CONFIG_PLATFORM_RTD2880B), y)
 EXTRA_CFLAGS += -DCONFIG_BIG_ENDIAN -DCONFIG_PLATFORM_RTD2880B
 ARCH:=
@@ -586,9 +620,19 @@ modules:
 strip:
 	$(CROSS_COMPILE)strip $(MODULE_NAME).ko --strip-unneeded
 
+ifeq ($(CONFIG_VENDOR_FRIENDLYARM), y)
+
+install:
+	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KSRC) M=$(shell pwd) \
+		INSTALL_MOD_PATH=$(KLIB) modules_install
+
+else
+
 install:
 	install -p -m 644 $(MODULE_NAME).ko  $(MODDESTDIR)
 	/sbin/depmod -a ${KVER}
+
+endif
 
 uninstall:
 	rm -f $(MODDESTDIR)/$(MODULE_NAME).ko
