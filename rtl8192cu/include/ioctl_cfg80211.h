@@ -111,6 +111,13 @@ struct rtw_wdev_priv
 	ATOMIC_T switch_ch_to;	
 #endif	
 	
+#if (LINUX_VERSION_CODE > KERNEL_VERSION(3,10,0)) || defined(CPTCFG_WIRELESS)
+	enum {
+		CFG80211_SME_IDLE,
+		CFG80211_SME_CONNECTING,
+		CFG80211_SME_CONNECTED,
+	} sme_state;
+#endif
 };
 
 #define wdev_to_priv(w) ((struct rtw_wdev_priv *)(wdev_priv(w)))
@@ -165,7 +172,10 @@ bool rtw_cfg80211_pwr_mgmt(_adapter *adapter);
 #define rtw_cfg80211_mgmt_tx_status(adapter, cookie, buf, len, ack, gfp) cfg80211_mgmt_tx_status((adapter)->rtw_wdev, cookie, buf, len, ack, gfp)
 #endif
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0))
+#if defined(CPTCFG_VERSION)
+#define rtw_cfg80211_ready_on_channel(adapter, cookie, chan, channel_type, duration, gfp)  cfg80211_ready_on_channel((adapter)->rtw_wdev, cookie, chan, duration, gfp)
+#define rtw_cfg80211_remain_on_channel_expired(adapter, cookie, chan, chan_type, gfp) cfg80211_remain_on_channel_expired((adapter)->rtw_wdev, cookie, chan, gfp)
+#elif (LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0))
 #define rtw_cfg80211_ready_on_channel(adapter, cookie, chan, channel_type, duration, gfp)  cfg80211_ready_on_channel((adapter)->pnetdev, cookie, chan, channel_type, duration, gfp)
 #define rtw_cfg80211_remain_on_channel_expired(adapter, cookie, chan, chan_type, gfp) cfg80211_remain_on_channel_expired((adapter)->pnetdev, cookie, chan, chan_type, gfp)
 #elif (LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0))

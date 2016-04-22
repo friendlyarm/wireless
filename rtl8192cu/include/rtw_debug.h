@@ -313,7 +313,7 @@ extern u32 GlobalDebugLevel;
 #if     defined (_dbgdump)
         #undef DBG_871X
 //      #define DBG_871X _dbgdump
-        #define DBG_871X(...) LOG_LEVEL(_drv_emerg_ , __VA_ARGS__)
+        #define DBG_871X(...) LOG_LEVEL(_drv_debug_ , __VA_ARGS__)
 
         #undef MSG_8192C
 //      #define MSG_8192C _dbgdump
@@ -321,7 +321,7 @@ extern u32 GlobalDebugLevel;
 
         #undef DBG_8192C
 //      #define DBG_8192C _dbgdump
-        #define DBG_8192C(...) LOG_LEVEL(_drv_emerg_ ,  __VA_ARGS__)
+        #define DBG_8192C(...) LOG_LEVEL(_drv_debug_ ,  __VA_ARGS__)
 
 
 	#undef WRN_8192C
