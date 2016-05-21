@@ -26,7 +26,9 @@
 #include <linux/skbuff.h>
 #include <linux/firmware.h>
 #include <linux/module.h>
+#if defined(CONFIG_ACPI)
 #include <linux/acpi.h>
+#endif
 #include <linux/platform_device.h>
 #include <linux/clk.h>
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0)
@@ -577,6 +579,10 @@ static int bcm_suspend(struct device *dev)
 	if (!bdev->hu)
 		goto unlock;
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 5, 0)
+#define pm_runtime_active(dev)		1
+#endif
+
 	if (pm_runtime_active(dev))
 		bcm_suspend_device(dev);
 
@@ -797,7 +803,9 @@ static int bcm_remove(struct platform_device *pdev)
 	list_del(&dev->list);
 	mutex_unlock(&bcm_device_lock);
 
+#if defined(CONFIG_ACPI)
 	acpi_dev_remove_driver_gpios(ACPI_COMPANION(&pdev->dev));
+#endif
 
 	dev_info(&pdev->dev, "%s device unregistered.\n", dev->name);
 

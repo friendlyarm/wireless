@@ -3,6 +3,10 @@
 #include_next <linux/clk.h>
 #include <linux/version.h>
 
+#if defined(CONFIG_ARCH_CPU_SLSI)
+#define CONFIG_COMMON_CLK		1
+#endif
+
 /*
  * commit 93abe8e4 - we only backport the non CONFIG_COMMON_CLK
  * case as the CONFIG_COMMON_CLK case requires arch support. By
