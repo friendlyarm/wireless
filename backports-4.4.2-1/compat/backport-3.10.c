@@ -32,6 +32,11 @@ void proc_set_user(struct proc_dir_entry *de, kuid_t uid, kgid_t gid)
 }
 EXPORT_SYMBOL_GPL(proc_set_user);
 
+/* Fixup for sunxi port of linux-3.4.39:
+ * - get_random_int() was exported in drivers/char/random.c
+ */
+#if !defined(CONFIG_ARCH_SUN8IW7P1) || \
+	(LINUX_VERSION_CODE != KERNEL_VERSION(3,4,39))
 /* get_random_int() was not exported for module use until 3.10-rc.
    Implement it here in terms of the more expensive get_random_bytes()
  */
@@ -43,6 +48,7 @@ unsigned int get_random_int(void)
 	return r;
 }
 EXPORT_SYMBOL_GPL(get_random_int);
+#endif
 
 #ifdef CONFIG_TTY
 /**
