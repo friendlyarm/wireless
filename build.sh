@@ -6,6 +6,7 @@
 true ${TOP:=$(pwd)}
 true ${OUT:=/tmp/wireless-modules}
 true ${ANDROID:=y}
+true ${XCROSS:=arm-linux-}
 
 # default config
 KDIR=/opt/FriendlyARM/nanopi3/linux-3.4.y
@@ -91,6 +92,7 @@ function build_rtl8192cu()
 {
 	local OPTS KSRC WDIR
 	OPTS="CONFIG_VENDOR_FRIENDLYARM=y CONFIG_PLATFORM_ANDROID=${ANDROID}"
+	OPTS="CROSS_COMPILE=${XCROSS} ${OPTS}"
 	KSRC=$1
 	WDIR=$2
 
@@ -104,6 +106,7 @@ function build_rtl8188eu()
 {
 	local OPTS KSRC WDIR
 	OPTS="CONFIG_VENDOR_FRIENDLYARM=y CONFIG_PLATFORM_ANDROID=${ANDROID}"
+	OPTS="CROSS_COMPILE=${XCROSS} ${OPTS}"
 	KSRC=$1
 	WDIR=$2
 
@@ -129,7 +132,7 @@ function create_kmod_tgz()
 	local TGZ=$1
 
 	cd ${OUT}/lib && {
-		find . -name \*.ko | xargs arm-linux-strip --strip-unneeded
+		find . -name \*.ko | xargs ${XCROSS}strip --strip-unneeded
 		tar czf ${TGZ}  modules/ &&
 			ls -l ${TGZ}
 	}
