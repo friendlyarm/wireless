@@ -3,6 +3,10 @@
 #include_next <linux/seq_file.h>
 #include <linux/version.h>
 
+/* See commit db3a4d8 of linux-3.4.y:
+ * userns: Make seq_file's user namespace accessible */
+#ifndef CONFIG_ARCH_CPU_SLSI
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
 #include <linux/user_namespace.h>
 #include <linux/file.h>
@@ -22,6 +26,8 @@ static inline struct user_namespace *seq_user_ns(struct seq_file *seq)
 }
 #endif /* CONFIG_USER_NS */
 #endif /* < 3.7 */
+
+#endif /* CONFIG_ARCH_CPU_SLSI */
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
 #define seq_has_overflowed LINUX_BACKPORT(seq_has_overflowed)
